@@ -33,7 +33,9 @@ module Controller(
     output logic MemRead,  //Data memory contents designated by the address input are put on the Read data output
     output logic MemWrite, //Data memory contents designated by the address input are replaced by the value on the Write data input.
     output Branch,  //0: branch is not taken; 1: branch is taken
-    output logic [1:0] ALUOp
+    output Load,
+    output Jal,
+    output logic [2:0] ALUOp
 );
 
 //    localparam R_TYPE = 7'b0110011;
@@ -42,14 +44,17 @@ module Controller(
 //    localparam BR     = 7'b1100011;
 //    localparam RTypeI = 7'b0010011; //addi,ori,andi
     
-    logic [6:0] R_TYPE, LW, SW, RTypeI,BR;
+    logic [6:0] R_TYPE, LW, SW, RTypeI,BR, JAL, JALR, LUI, AUIPC;
     
     assign  R_TYPE = 7'b0110011;
     assign  LW     = 7'b0000011;
     assign  SW     = 7'b0100011;
     assign  RTypeI = 7'b0010011; //addi,ori,andi
  	assign  BR     = 7'b1100011;
-
+ 	assign  JAL    = 7'b1101111;
+ 	assign  JALR   = 7'b1100111;
+ 	assign  LUI    = 7'b0110111;
+    assign  AUIPC  = 7'b0010111;
 
 
 
@@ -58,8 +63,10 @@ module Controller(
   assign RegWrite = (Opcode==R_TYPE || Opcode==LW || Opcode == RTypeI);
   assign MemRead  = (Opcode==LW);
   assign MemWrite = (Opcode==SW);
-  assign ALUOp[0] = (Opcode==SW ||Opcode==LW ||Opcode==BR);
-  assign ALUOp[1] = (Opcode==RTypeI ||Opcode==LW );
-  assign Branch   = Opcode==BR;
+  assign ALUOp[0] = (Opcode==BR || Opcode==JALR || Opcode==AUIPC );
+  assign ALUOp[1] = (Opcode==RTypeI || Opcode==R_TYPE ||Opcode==LUI || Opcode==AUIPC);
+  assign ALUOp[2] = (Opcode==JAL || Opcode==JALR || Opcode==LUI || Opcode==AUIPC);
+  assign Branch   = (Opcode==BR ||Opcode==JAL);
+  assign Load     = (Opcode==LW);
 
 endmodule

@@ -55,9 +55,27 @@ module alu#(
             5'b00111:        //sra srai
                     ALUResult = $signed(SrcA) >>> SrcB;
             5'b10001:        //slti slt
-                    ALUResult = ($signed(SrcA) < $signed(SrcB))?(32'b0+1'b0):(32'b0);
+                    ALUResult = ($signed(SrcA) < $signed(SrcB))?(32'b0+1'b1):(32'b0);
             5'b10010:        //sltu sltiu
-                    ALUResult = (SrcA < SrcB)?(32'b0+1'b0):32'b0;
+                    ALUResult = (SrcA < SrcB)?(32'b0+1'b1):32'b0;
+            //Load STORE
+            5'b10011:       //LB, LH, LW, LBU, LHU
+                    ALUResult = SrcA + SrcB;
+                    
+            //JAL
+            5'b10100: 
+                    ALUZero = 1'b1;
+             //FIX EVERYTHING BELOW
+             //JALR
+            5'b10101: 
+                    ALUZero = 1'b1;
+            //LUI
+            5'b10110:
+                     ALUZero = 1'b1;  
+            //AUIPC
+            5'b10110:
+                     ALUZero = 1'b1;                       
+            //FIX EVERYTHING ABOVE                
                     
             //Branch
             5'b01000:        //rs1 == rs2 BEQ
@@ -71,7 +89,9 @@ module alu#(
             5'b01100:        //rs1 < rs2 BLTU
                     ALUZero = ($unsigned(SrcA) < $unsigned(SrcB))?1'b1:1'b0;   
             5'b01101:        //rs1 >= rs2 BGEU
-                    ALUZero = ($unsigned(SrcA) >= $unsigned(SrcB))?1'b1:1'b0;             
+                    ALUZero = ($unsigned(SrcA) >= $unsigned(SrcB))?1'b1:1'b0;           
+            5'b01110:        //rs1 >= rs2 BGEU
+                    ALUZero = 1'b1;               
             default:
                     ALUResult = 'b0;
             endcase

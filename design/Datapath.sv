@@ -25,6 +25,7 @@ module Datapath #(
     parameter RF_ADDRESS = 5, // Register File Address
     parameter DATA_W = 32, // Data WriteData
     parameter DM_ADDRESS = 9, // Data Memory Address
+    parameter DM_OFFSET = 2, // Toggles half word & byte selection
     parameter ALU_CC_W = 5 // ALU Control Code Width
     )(
     input logic clk , reset , // global clock
@@ -86,6 +87,6 @@ assign PCsel = (Branch && ALUZero);
     assign WB_Data = Result;
     
 ////// Data memory 
-	datamemory data_mem (clk, MemRead, MemWrite, ALUResult[DM_ADDRESS-1:0], Reg2, ReadData);
+	datamemory data_mem (clk,Funct3, MemRead, MemWrite, ALUResult[DM_ADDRESS-1:0], Reg2, ReadData);
      
 endmodule
