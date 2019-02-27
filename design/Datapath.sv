@@ -34,6 +34,7 @@ module Datapath #(
     ALUsrc , MemWrite ,       // Register file or Immediate MUX // Memroy Writing Enable
     MemRead ,                 // Memroy Reading Enable
     Branch,                   //branch (conditional instructions)
+    AUIPC,
     PCtoReg,                  //sel to control pc+4 to write back if JALR is 1
     input logic [ ALU_CC_W -1:0] ALU_CC, // ALU Control Code ( input of the ALU )
     output logic [6:0] opcode,
@@ -49,7 +50,7 @@ logic [DATA_W-1:0] PC_Reg;
 logic [DATA_W-1:0] ALUorMem;
 logic [DATA_W-1:0] Reg1, Reg2;
 logic [DATA_W-1:0] ReadData;
-logic [DATA_W-1:0] SrcB, ALUResult;
+logic [DATA_W-1:0] SrcA, SrcB, ALUResult;
 logic [DATA_W-1:0] ExtImm;
 logic [DATA_W-1:0] shift_left_ExtImm;
 logic ALUZero,PCsel;
@@ -86,8 +87,9 @@ assign PCsel = (Branch && ALUZero);
     imm_Gen Ext_Imm (Instr,ExtImm);
 
 //// ALU
-    mux2 #(32) srcbmux(Reg2, ExtImm, ALUsrc, SrcB);
-    alu alu_module(Reg1, SrcB, ALU_CC, ALUResult, ALUZero);
+    mux2 #(32) srcbmux(Reg2, ExtImm,  ALUsrc, SrcB);
+    mux2 #(32) srcamux(Reg1, {21'b0,PC}, AUIPC, SrcA);
+    alu alu_module(SrcA, SrcB, ALU_CC, ALUResult, ALUZero);
     
 
     assign WB_Data = Result;

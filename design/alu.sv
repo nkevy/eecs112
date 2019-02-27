@@ -65,7 +65,7 @@ module alu#(
             //JAL
             5'b10100: 
                     ALUZero = 1'b1;
-             //FIX EVERYTHING BELOW
+
              //JALR
             5'b10101: 
             begin
@@ -76,9 +76,10 @@ module alu#(
             5'b10110:
                      ALUResult = {SrcB[19:0],12'b0};
             //AUIPC
-            5'b10110:
-                     ALUZero = 1'b1;                       
-            //FIX EVERYTHING ABOVE                
+            5'b10111:
+                    
+                     ALUResult =  SrcA + SrcB;                      
+             
                     
             //Branch
             5'b01000:        //rs1 == rs2 BEQ

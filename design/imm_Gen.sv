@@ -48,7 +48,7 @@ always_comb
         7'b0110111 /*LUI*/:
               Imm_out = {inst_code[31]?12'b111111111111:12'b0, inst_code[31:12] };
         7'b0010111 /*AUIPC*/:
-              Imm_out = {inst_code[31]?12'b111111111111:12'b0, inst_code[31:12] };           
+              Imm_out = {inst_code[31:12], 12'b0};           
               
         default                    : 
             Imm_out = {32'b0};
