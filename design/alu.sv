@@ -68,7 +68,10 @@ module alu#(
              //FIX EVERYTHING BELOW
              //JALR
             5'b10101: 
+            begin
                     ALUZero = 1'b1;
+                    ALUResult = (SrcA + $signed(SrcB)) & ({{31{1'b1}},1'b0});
+            end
             //LUI
             5'b10110:
                      ALUZero = 1'b1;  

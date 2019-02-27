@@ -34,6 +34,7 @@ module Datapath #(
     ALUsrc , MemWrite ,       // Register file or Immediate MUX // Memroy Writing Enable
     MemRead ,                 // Memroy Reading Enable
     Branch,                   //branch (conditional instructions)
+    PCtoReg,                  //sel to control pc+4 to write back if JALR is 1
     input logic [ ALU_CC_W -1:0] ALU_CC, // ALU Control Code ( input of the ALU )
     output logic [6:0] opcode,
     output logic [6:0] Funct7,
@@ -44,6 +45,8 @@ module Datapath #(
 logic [PC_W-1:0] PC, PCPlus4, PCBranch, PCnext;
 logic [INS_W-1:0] Instr;
 logic [DATA_W-1:0] Result;
+logic [DATA_W-1:0] PC_Reg;
+logic [DATA_W-1:0] ALUorMem;
 logic [DATA_W-1:0] Reg1, Reg2;
 logic [DATA_W-1:0] ReadData;
 logic [DATA_W-1:0] SrcB, ALUResult;
@@ -61,7 +64,7 @@ assign PCsel = (Branch && ALUZero);
     mux2  #(9) mpc (PCPlus4, PCBranch, PCsel, PCnext);
     flopr #(9) pcreg(clk, reset, PCnext, PC);
     
-    
+    assign PC_Reg = {23'b0,PCPlus4};
     
 
  //Instruction memory
@@ -75,7 +78,9 @@ assign PCsel = (Branch && ALUZero);
     RegFile rf(clk, reset, RegWrite, Instr[11:7], Instr[19:15], Instr[24:20],
             Result, Reg1, Reg2);
             
-    mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, Result);
+    mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, ALUorMem);
+    //jalr mux bellow
+    mux2 #(32) jalrmux(ALUorMem, PC_Reg, PCtoReg, Result);
            
 //// sign extend
     imm_Gen Ext_Imm (Instr,ExtImm);
@@ -84,7 +89,9 @@ assign PCsel = (Branch && ALUZero);
     mux2 #(32) srcbmux(Reg2, ExtImm, ALUsrc, SrcB);
     alu alu_module(Reg1, SrcB, ALU_CC, ALUResult, ALUZero);
     
+
     assign WB_Data = Result;
+    
     
 ////// Data memory 
 	datamemory data_mem (clk,Funct3, MemRead, MemWrite, ALUResult[DM_ADDRESS-1:0], Reg2, ReadData);

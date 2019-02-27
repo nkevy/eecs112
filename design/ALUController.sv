@@ -62,10 +62,9 @@ module ALUController(
 		              //branch
 		              ((Branch == 1'b1 && ALUOp==3'b001) && (Funct3==3'b110 || Funct3==3'b111)) ||// for BLT, BGE
 		               //R-Type                                 //SUB                                    // SRL or SRA      //SLL                                       
-                      (((ALUOp==3'b010)) &&  ((Funct3==3'b000 && Funct7==7'b0100000) || Funct3==3'b101 || Funct3==3'b001)) 
-                    
-
-		              ;
+                      (((ALUOp==3'b010)) &&  ((Funct3==3'b000 && Funct7==7'b0100000) || Funct3==3'b101 || Funct3==3'b001));
+                      
+                      //JAL, JALR, LUI, AUIPC
  assign Operation[3]= (Branch == 1'b1) && (ALUOp==3'b001);
  
  assign Operation[4]= 
@@ -74,6 +73,6 @@ module ALUController(
                       //R-Type                                //SLT             //SLTU
                       (((ALUOp==3'b010)) &&  (Funct3==3'b010 || Funct3==3'b011)) ||
                       //Load                //LB               //LH               //LW                 //LBU                //LHU
-                      ((ALUOp==3'b000)  && ((Funct3==3'b000) || (Funct3==3'b001) || (Funct3==3'b010)  || (Funct3==3'b100)  || (Funct3==3'b101)))
-                      ;
+                      ((ALUOp==3'b000)  && ((Funct3==3'b000) || (Funct3==3'b001) || (Funct3==3'b010)  || (Funct3==3'b100)  || (Funct3==3'b101)));
+                      
 endmodule
