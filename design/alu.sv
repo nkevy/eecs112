@@ -74,7 +74,7 @@ module alu#(
             end
             //LUI
             5'b10110:
-                     ALUZero = 1'b1;  
+                     ALUResult = {SrcB[19:0],12'b0};
             //AUIPC
             5'b10110:
                      ALUZero = 1'b1;                       

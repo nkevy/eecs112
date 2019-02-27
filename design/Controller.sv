@@ -59,15 +59,15 @@ module Controller(
 
 
 
-  assign ALUSrc   = (Opcode==LW || Opcode==SW || Opcode == RTypeI);
+  assign ALUSrc   = (Opcode==LW || Opcode==SW || Opcode == RTypeI || Opcode == LUI || Opcode == JALR);
   assign MemtoReg = (Opcode==LW);
-  assign RegWrite = (Opcode==R_TYPE || Opcode==LW || Opcode == RTypeI || Opcode == JALR);
+  assign RegWrite = (Opcode==R_TYPE || Opcode==LW || Opcode == RTypeI || Opcode == JALR || Opcode ==LUI);
   assign MemRead  = (Opcode==LW);
   assign MemWrite = (Opcode==SW);
   assign ALUOp[0] = (Opcode==BR || Opcode==JALR || Opcode==AUIPC );
   assign ALUOp[1] = (Opcode==RTypeI || Opcode==R_TYPE ||Opcode==LUI || Opcode==AUIPC);
   assign ALUOp[2] = (Opcode==JAL || Opcode==JALR || Opcode==LUI || Opcode==AUIPC);
-  assign Branch   = (Opcode==BR ||Opcode==JAL);
+  assign Branch   = (Opcode==BR || Opcode==JAL || Opcode == JALR);
   assign Load     = (Opcode==LW);
   assign PCtoReg  = (Opcode==JALR);
 
