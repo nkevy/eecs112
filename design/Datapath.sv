@@ -90,7 +90,6 @@ assign PCsel = (Branch && ALUZero);
     mux2 #(32) srcbmux(Reg2, ExtImm,  ALUsrc, SrcB);
     mux2 #(32) srcamux(Reg1, {21'b0,PC}, AUIPC, SrcA);
     alu alu_module(SrcA, SrcB, ALU_CC, ALUResult, ALUZero);
-    
 
     assign WB_Data = Result;
     

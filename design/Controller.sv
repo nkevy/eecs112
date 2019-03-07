@@ -32,10 +32,10 @@ module Controller(
     output logic RegWrite, //The register on the Write register input is written with the value on the Write data input 
     output logic MemRead,  //Data memory contents designated by the address input are put on the Read data output
     output logic MemWrite, //Data memory contents designated by the address input are replaced by the value on the Write data input.
-    output Branch,  //0: branch is not taken; 1: branch is taken
-    output PCtoReg,
-    output AUIPC,
-    output Jal,
+    output logic Branch,  //0: branch is not taken; 1: branch is taken
+    output logic PCtoReg,
+    output logic AUIPC,
+    output logic Jal,
     output logic [2:0] ALUOp
 );
 
@@ -68,7 +68,7 @@ module Controller(
   assign ALUOp[1] = (Opcode==RTypeI || Opcode==R_TYPE ||Opcode==LUI || Opcode==AUIPC);
   assign ALUOp[2] = (Opcode==JAL || Opcode==JALR || Opcode==LUI || Opcode==AUIPC);
   assign Branch   = (Opcode==BR || Opcode==JAL || Opcode == JALR);
-  assign AUIPC    = (Opcode== AUI);
+  assign AUIPC    = (Opcode==AUI);
   assign PCtoReg  = (Opcode==JALR);
 
 endmodule
