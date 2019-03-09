@@ -18,24 +18,23 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
-
 module IDEXReg#(
     parameter DATA_W = 32,
-    parameter R_NUM = 16
+    parameter R_NUM = 17
     )(
     input logic clk,
     input logic rst,
     input logic Pause,
+    input logic pc2reg,
     input logic ALUsrc,
     input logic m2Reg,
     input logic rgWrite,
     input logic mRead,
     input logic mWrite,
     input logic Branch,
-    input logic PC2Reg,
+    input logic [DATA_W-1:0] pc_reg,
     input logic AUIPC,
-    input logic [2:0] ALUop,
+    inout logic [9:0] PC,
     input logic [2:0] funct3,
     input logic [6:0] funct7,
     input logic [6:0] Opcode,
@@ -51,14 +50,15 @@ module IDEXReg#(
     output logic Branch_o,
     output logic PC2Reg_o,
     output logic AUIPC_o,
-    output logic [2:0] ALUop_o,
+    output logic PC_o,
     output logic [2:0] func3_o,
     output logic [6:0] func7_o,
     output logic [6:0] Opcode_o,
     output logic [4:0] Operation_o,
     output logic [DATA_W-1:0] SrcA_o,
     output logic [DATA_W-1:0] SrcB_o,
-    output logic [DATA_W-1:0] inst_o
+    output logic [DATA_W-1:0] inst_o,
+    output logic [DATA_W-1:0] pc_reg_o
     );
     integer i;
     logic [R_NUM-1:0] mem [DATA_W];
@@ -70,9 +70,9 @@ module IDEXReg#(
             mem[3] <= {31'b0,mRead};
             mem[4] <= {31'b0,mWrite};
             mem[5] <= {31'b0,Branch};
-            mem[6] <= {31'b0,PC2Reg};
+            mem[6] <= {31'b0,pc2reg};
             mem[7] <= {31'b0,AUIPC};
-            mem[8] <= {29'b0,ALUop};
+            mem[8] <= {23'b0,PC};
             mem[9] <= {29'b0,funct3};
             mem[10] <= {25'b0,funct7};
             mem[11] <= {25'b0,Opcode};
@@ -80,6 +80,7 @@ module IDEXReg#(
             mem[13] <= SrcA;
             mem[14] <= SrcB;
             mem[15] <=inst_in;
+            mem[16] <=pc_reg;
         end
         else if (rst==1'b1)
         for(i=0;i<R_NUM;i++)
@@ -93,7 +94,7 @@ module IDEXReg#(
     assign Branch_o = mem[5][0];
     assign PC2Reg_o = mem[6][0];
     assign AUIPC_o = mem[7][0];
-    assign ALUop_o = mem[8][2:0];
+    assign PC_o = mem[8][9:0];
     assign func3_o = mem[9][2:0];
     assign func7_o = mem[10][6:0];
     assign Opcode_o = mem[11][6:0];
@@ -101,4 +102,5 @@ module IDEXReg#(
     assign SrcA_o = mem[13];
     assign SrcB_o = mem[14];
     assign inst_o = mem[15];
+    assign pc_reg_o = mem[16];
 endmodule

@@ -22,10 +22,13 @@
 
 module EXMEMReg#(
     parameter DATA_W = 32,
-    parameter R_NUM = 9
+    parameter R_NUM = 12
     )(
     input logic clk,
     input logic rst,
+    input logic [DATA_W-1:0] pc_reg,
+    input logic pc2reg,
+    input logic rd,
     input logic m2Reg,
     input logic rgWrite,
     input logic mRead,
@@ -35,6 +38,7 @@ module EXMEMReg#(
     input logic [2:0] funct3,
     input logic [DATA_W-1:0] SrcB,
     input logic [DATA_W-1:0] Result,
+    output logic rd_o,
     output logic m2Reg_o,
     output logic rgWrite_o,
     output logic mRead_o,
@@ -43,7 +47,9 @@ module EXMEMReg#(
     output logic AUIPC_o,
     output logic [2:0] funct3_o,
     output logic [DATA_W-1:0] SrcB_o,
-    output logic [DATA_W-1:0] Result_o
+    output logic [DATA_W-1:0] Result_o,
+    output logic [DATA_W-1:0] pc_reg_o,
+    output logic pc2reg_o
     );
     integer i;
     logic [R_NUM-1:0] mem [DATA_W-1:0];
@@ -58,6 +64,9 @@ module EXMEMReg#(
             mem[6] <= {29'b0,funct3};
             mem[7] <= SrcB;
             mem[8] <= Result;
+            mem[9] <= {27'b0,rd};
+            mem[10]<= pc_reg;
+            mem[11]<= {31'b0,pc2reg};
         end
         else if (rst==1'b0)
         for(i=0;i<R_NUM;i++)
@@ -72,4 +81,7 @@ module EXMEMReg#(
     assign funct3_o = mem[6][2:0];
     assign SrcB_o = mem[7];
     assign Result_o = mem[8];
+    assign rd_o = mem[9][4:0];
+    assign pc_reg_o = mem[10];
+    assign pc2reg = mem[11][0];
 endmodule
