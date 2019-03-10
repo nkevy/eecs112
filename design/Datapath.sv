@@ -146,7 +146,8 @@ assign PCsel = (Branch && ALUZero);
         m2Reg_r4,rgWrite_r4,rd_r4,pc_reg_r4,pc2reg_r4,ReadData_r4,ALUResult_r4);
 ////end reg 4
 
-forward_unit#(32) f_unit({27'b0,ifdInst[19:15]}, {27'b0, ifdInst[24:20]},{27'b0,Inst_r2[11:7]} , {27'b0,rd_r3},  rgWrite_r3, rgWrite_r4, forwardA, forwardB); 
+forward_unit#(5) f_unit(ifdInst[19:15],ifdInst[24:20],Inst_r2[11:7] , rd_r3,  rgWrite_r3, rgWrite_r4, forwardA, forwardB); 
+hazard_unit#(5)(ifdInst[19:15], ifdInst[24:20],Inst_r2[11:7], MemRead_r2, Pause); 
 //// final mux
     mux2 #(32) resmux(ALUResult_r4, ReadData_r4, m2Reg_r4, ALUorMem);
 //// jalr mux bellow

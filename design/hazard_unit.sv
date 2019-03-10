@@ -21,7 +21,7 @@
 
 
 module hazard_unit
-    #( parameter WIDTH = 32)
+    #( parameter WIDTH = 5)
     (
     input logic [WIDTH-1:0] IF_ID_reg1,IF_ID_reg2, ID_EX_reg,
     input logic ID_EX_MemRead,

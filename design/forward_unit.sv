@@ -22,7 +22,7 @@
 
 module forward_unit
 
-    #(parameter WIDTH = 32)
+    #(parameter WIDTH = 5)
     (
     input logic [WIDTH-1:0] rs1, rs2, EX_MEM_reg, MEM_WB_reg,
     input logic EX_MEM_regWrite, MEM_WB_regWrite, 
