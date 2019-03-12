@@ -28,7 +28,7 @@ module EXMEMReg#(
     input logic rst,
     input logic [DATA_W-1:0] pc_reg,
     input logic pc2reg,
-    input logic rd,
+    input logic [4:0] rd,
     input logic m2Reg,
     input logic rgWrite,
     input logic mRead,
@@ -38,7 +38,7 @@ module EXMEMReg#(
     input logic [2:0] funct3,
     input logic [DATA_W-1:0] SrcB,
     input logic [DATA_W-1:0] Result,
-    output logic rd_o,
+    output logic[4:0] rd_o,
     output logic m2Reg_o,
     output logic rgWrite_o,
     output logic mRead_o,
@@ -52,7 +52,7 @@ module EXMEMReg#(
     output logic pc2reg_o
     );
     integer i;
-    logic [R_NUM-1:0] mem [DATA_W-1:0];
+    logic [R_NUM-1:0][DATA_W-1:0] mem;
     always @(negedge clk) begin
         if(rst==1'b0)begin
             mem[0] <= {31'b0,m2Reg};

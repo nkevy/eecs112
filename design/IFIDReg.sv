@@ -35,11 +35,11 @@ module IFIDReg#(
     output logic [DATA_W-1:0] PC_Reg_o
     );
     integer i;
-    logic [3:0] mem [DATA_W:0];
+    logic [3:0][DATA_W-1:0] mem ;
     always @(negedge clk) begin
         if (rst==1'b0 && Pause==1'b0)begin
             mem[0]<=inst_in;
-            mem[1][PC_W-1:0]<=ipc;
+            mem[1]<={23'b0,ipc};
             mem[2]<=PC_Reg;
             mem[3]<={31'b0,pc2reg};
         end
@@ -48,7 +48,7 @@ module IFIDReg#(
             mem[i]<=0;
     end
     assign inst_out = mem[0];
-    assign opc = mem[1][PC_W-1:0];
+    assign opc = mem[1][7:0];
     assign PC_Reg_o = mem[2];
     assign pc2reg_o = mem[3][0];
 endmodule

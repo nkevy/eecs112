@@ -34,7 +34,7 @@ module IDEXReg#(
     input logic Branch,
     input logic [DATA_W-1:0] pc_reg,
     input logic AUIPC,
-    inout logic [9:0] PC,
+    input logic [8:0] PC,
     input logic [2:0] funct3,
     input logic [6:0] funct7,
     input logic [6:0] Opcode,
@@ -50,7 +50,7 @@ module IDEXReg#(
     output logic Branch_o,
     output logic PC2Reg_o,
     output logic AUIPC_o,
-    output logic PC_o,
+    output logic[8:0] PC_o,
     output logic [2:0] func3_o,
     output logic [6:0] func7_o,
     output logic [6:0] Opcode_o,
@@ -61,7 +61,7 @@ module IDEXReg#(
     output logic [DATA_W-1:0] pc_reg_o
     );
     integer i;
-    logic [R_NUM-1:0] mem [DATA_W];
+    logic [R_NUM-1:0][DATA_W-1:0] mem;
     always @(negedge clk) begin
         if (rst==1'b0 && Pause==1'b0)begin
             mem[0] <= {31'b0,ALUsrc};

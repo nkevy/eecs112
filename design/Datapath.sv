@@ -110,11 +110,11 @@ assign PCsel = (Branch && ALUZero);
 
 //// ALU
    logic [DATA_W-1:0] result_r3, A_Result, B_Result, EX_MEM_rd_reg, MEM_WB_rd_reg;
-   logic forwardA, forwardB;
+   logic [1:0] forwardA, forwardB;
    logic EX_MEM_regWrite, MEM_WB_regWrite;
 
     mux2 #(32) srcbmux(SrcB_r2, ExtImm,  ALUsrc_r2, SrcB);
-    mux2 #(32) srcamux(SrcA_r2, {21'b0,pc_r2}, AUIPC_r2, SrcA);
+    mux2 #(32) srcamux(SrcA_r2, {23'b0,pc_r2}, AUIPC_r2, SrcA);
     mux3 #(32) a_mux(SrcA, Result, result_r3,forwardA, A_Result);
     mux3 #(32) b_mux(SrcB, Result, result_r3,forwardB, B_Result);
     alu alu_module(A_Result, B_Result, Operation_r2, ALUResult, ALUZero);
@@ -142,12 +142,12 @@ assign PCsel = (Branch && ALUZero);
     logic [DATA_W-1:0] ReadData_r4;
     logic [DATA_W-1:0] ALUResult_r4;
     logic [DATA_W-1:0] pc_reg_r4;
-    MEMWBReg #(32,7) r4(clk,reset,pc_reg_r3,pc2reg_r3,m2Reg_r3,rgWrite_r3,ReadData,rd_r3,Result_r3,
+    MEMWBReg #(32,8) r4(clk,reset,pc_reg_r3,pc2reg_r3,m2Reg_r3,rgWrite_r3,ReadData,rd_r3,Result_r3,
         m2Reg_r4,rgWrite_r4,rd_r4,pc_reg_r4,pc2reg_r4,ReadData_r4,ALUResult_r4);
 ////end reg 4
 
 forward_unit#(5) f_unit(ifdInst[19:15],ifdInst[24:20],Inst_r2[11:7] , rd_r3,  rgWrite_r3, rgWrite_r4, forwardA, forwardB); 
-hazard_unit#(5)(ifdInst[19:15], ifdInst[24:20],Inst_r2[11:7], MemRead_r2, Pause); 
+hazard_unit#(5) h_unit(ifdInst[19:15], ifdInst[24:20],Inst_r2[11:7], MemRead_r2, Pause); 
 //// final mux
     mux2 #(32) resmux(ALUResult_r4, ReadData_r4, m2Reg_r4, ALUorMem);
 //// jalr mux bellow

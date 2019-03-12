@@ -33,14 +33,14 @@ module MEMWBReg#(
     input logic [DATA_W-1:0] ALUResult,
     output logic m2Reg_o,
     output logic rgWrite_o,
-    output logic rd_o,
+    output logic [4:0] rd_o,
     output logic [DATA_W-1:0] pc_reg_o,
     output logic pc2reg_o,
     output logic [DATA_W-1:0] Result_o,
     output logic [DATA_W-1:0] ALUResult_o
     );
     integer i;
-    logic [R_NUM-1:0] mem [DATA_W-1:0];
+    logic [R_NUM-1:0][DATA_W-1:0] mem;
     always@(negedge clk)begin
         if (rst==1'b0)begin
             mem[0]<={31'b0,m2Reg};
