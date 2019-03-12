@@ -85,7 +85,9 @@ assign PCsel = (Branch && ALUZero);
 
 // //Register File
     logic rgWrite_r4;
-    RegFile rf(clk, reset, rgWrite_r4, ifdInst[11:7], ifdInst[19:15], ifdInst[24:20],
+    logic [4:0] rd_r4;
+    //input change! ifdInst must be changed to rd_r4 as writeback uses rd 
+    RegFile rf(clk, reset, rgWrite_r4, rd_r4, ifdInst[19:15], ifdInst[24:20],
             Result, Reg1, Reg2);
             
 //// pipeline reg 2
@@ -109,14 +111,14 @@ assign PCsel = (Branch && ALUZero);
     imm_Gen Ext_Imm (Inst_r2,ExtImm);
 
 //// ALU
-   logic [DATA_W-1:0] result_r3, A_Result, B_Result, EX_MEM_rd_reg, MEM_WB_rd_reg;
+   logic [DATA_W-1:0] Result_r3, A_Result, B_Result, EX_MEM_rd_reg, MEM_WB_rd_reg;
    logic [1:0] forwardA, forwardB;
    logic EX_MEM_regWrite, MEM_WB_regWrite;
 
     mux2 #(32) srcbmux(SrcB_r2, ExtImm,  ALUsrc_r2, SrcB);
     mux2 #(32) srcamux(SrcA_r2, {23'b0,pc_r2}, AUIPC_r2, SrcA);
-    mux3 #(32) a_mux(SrcA, Result, result_r3,forwardA, A_Result);
-    mux3 #(32) b_mux(SrcB, Result, result_r3,forwardB, B_Result);
+    mux3 #(32) a_mux(SrcA, Result, Result_r3,forwardA, A_Result);
+    mux3 #(32) b_mux(SrcB, Result, Result_r3,forwardB, B_Result);
     alu alu_module(A_Result, B_Result, Operation_r2, ALUResult, ALUZero);
     
     assign WB_Data = Result;
@@ -125,7 +127,7 @@ assign PCsel = (Branch && ALUZero);
     logic m2Reg_r3, rgWrite_r3, mRead_r3, mWrite_r3, Branch_r3, AUIPC_r3,pc2reg_r3;
     logic [2:0] funct3_r3;
     logic [4:0] rd_r3;
-    logic [DATA_W-1:0] SrcB_r3, Result_r3, pc_reg_r3;
+    logic [DATA_W-1:0] SrcB_r3,pc_reg_r3;
     EXMEMReg #(32,12) r2(clk,reset,pc_reg_r2,pc2reg_r2,Inst_r2[11:7],m2Reg_r2,RegWrite_r2,MemRead_r2,MemWrite_r2,Branch_r2,AUIPC_r2,funct3_r2,B_Result,ALUResult,
         rd_r3,m2Reg_r3, rgWrite_r3, mRead_r3, mWrite_r3, Branch_r3, AUIPC_r3,funct3_r3,SrcB_r3,Result_r3,pc_reg_r3,pc2reg_r3);
 //end reg3
@@ -138,7 +140,6 @@ assign PCsel = (Branch && ALUZero);
 
 ////pipeline reg 4
     logic m2Reg_r4,pc2reg_r4;
-    logic [4:0] rd_r4;
     logic [DATA_W-1:0] ReadData_r4;
     logic [DATA_W-1:0] ALUResult_r4;
     logic [DATA_W-1:0] pc_reg_r4;

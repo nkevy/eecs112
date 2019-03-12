@@ -82,9 +82,10 @@ module IDEXReg#(
             mem[15] <=inst_in;
             mem[16] <=pc_reg;
         end
-        else if (rst==1'b1)
+        if (rst==1'b1) begin
         for(i=0;i<R_NUM;i++)
             mem[i]<=0;
+        end
     end
     assign ALUsrc_o = mem[0][0];
     assign m2Reg_o = mem[1][0];

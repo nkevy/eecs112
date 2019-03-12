@@ -21,7 +21,7 @@
 
 
 module forward_unit
-
+//add logic to make it not work while PC<16
     #(parameter WIDTH = 5)
     (
     input logic [WIDTH-1:0] rs1, rs2, EX_MEM_reg, MEM_WB_reg,
