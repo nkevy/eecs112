@@ -25,6 +25,7 @@ module IDEXReg#(
     input logic clk,
     input logic rst,
     input logic Pause,
+    input logic PCsel,
     input logic pc2reg,
     input logic ALUsrc,
     input logic m2Reg,
@@ -82,11 +83,16 @@ module IDEXReg#(
             mem[15] <=inst_in;
             mem[16] <=pc_reg;
         end
-        if (rst==1'b1) begin
+        if ((rst==1'b1) || (Pause==1'b1)) begin
         for(i=0;i<R_NUM;i++)
             mem[i]<=0;
         end
     end
+    //always@(posedge clk)begin
+    //    if(rst==1'b0&&PCsel==2'b01)
+    //    for(i=0;i<R_NUM;i++)
+    //        mem[i]<=0;
+    //end
     assign ALUsrc_o = mem[0][0];
     assign m2Reg_o = mem[1][0];
     assign rgWrite_o = mem[2][0];

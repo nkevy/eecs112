@@ -28,7 +28,7 @@ module EXMEMReg#(
     input logic rst,
     input logic [DATA_W-1:0] pc_reg,
     input logic pc2reg,
-    input logic [4:0] rd,
+    input logic [DATA_W-1:0] Inst_i,
     input logic m2Reg,
     input logic rgWrite,
     input logic mRead,
@@ -38,7 +38,6 @@ module EXMEMReg#(
     input logic [2:0] funct3,
     input logic [DATA_W-1:0] SrcB,
     input logic [DATA_W-1:0] Result,
-    output logic[4:0] rd_o,
     output logic m2Reg_o,
     output logic rgWrite_o,
     output logic mRead_o,
@@ -49,7 +48,8 @@ module EXMEMReg#(
     output logic [DATA_W-1:0] SrcB_o,
     output logic [DATA_W-1:0] Result_o,
     output logic [DATA_W-1:0] pc_reg_o,
-    output logic pc2reg_o
+    output logic pc2reg_o,
+    output logic[DATA_W-1:0] Inst_o
     );
     integer i;
     logic [R_NUM-1:0][DATA_W-1:0] mem;
@@ -62,13 +62,13 @@ module EXMEMReg#(
             mem[4] <= {31'b0,Branch};
             mem[5] <= {31'b0,AUIPC};
             mem[6] <= {29'b0,funct3};
-            mem[7] <= SrcB;
+            mem[7] <= SrcB[DATA_W-1:0];
             mem[8] <= Result;
-            mem[9] <= {27'b0,rd};
+            mem[9] <= Inst_i;
             mem[10]<= pc_reg;
             mem[11]<= {31'b0,pc2reg};
         end
-        else if (rst==1'b0)
+        else if (rst==1'b1)
         for(i=0;i<R_NUM;i++)
             mem[i]<=0;
     end
@@ -79,9 +79,9 @@ module EXMEMReg#(
     assign Branch_o = mem[4][0];
     assign AUIPC_o = mem[5][0];
     assign funct3_o = mem[6][2:0];
-    assign SrcB_o = mem[7];
+    assign SrcB_o = mem[7][DATA_W-1:0];
     assign Result_o = mem[8];
-    assign rd_o = mem[9][4:0];
     assign pc_reg_o = mem[10];
-    assign pc2reg = mem[11][0];
+    assign pc2reg_o = mem[11][0];
+    assign Inst_o = mem[9];
 endmodule

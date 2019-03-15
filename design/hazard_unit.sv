@@ -28,12 +28,7 @@ module hazard_unit
     output logic nop_switch
     );
     
-    always_comb
-    begin 
-    assign nop_switch = 1'b0;
-    
-    if((ID_EX_MemRead) && ((ID_EX_reg == IF_ID_reg1) || (ID_EX_reg == IF_ID_reg2)))
-        assign nop_switch = 1'b1;
-    
-    end
+
+     assign nop_switch = ((ID_EX_MemRead) && ((ID_EX_reg == IF_ID_reg1) || (ID_EX_reg == IF_ID_reg2))) ;
+   
 endmodule
