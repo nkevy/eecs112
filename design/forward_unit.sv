@@ -35,20 +35,20 @@ module forward_unit
     );
     
         always_comb begin
-        assign fowardA = 2'b00;
-        assign fowardB = 2'b00;
+        fowardA = 2'b00;
+        fowardB = 2'b00;
         if((PC > 9'b000010000) )  begin
            //EX Hazard
             if ((EX_MEM_regWrite) && (EX_MEM_reg != 32'b0) && ( rs1 == EX_MEM_reg))
-                assign fowardA = 2'b10;
+                fowardA = 2'b10;
             if ((EX_MEM_regWrite) && (EX_MEM_reg != 32'b0) && ( rs2 == EX_MEM_reg) && ( opcode_EXMEM != 7'b0010011))
-                assign fowardB = 2'b10;    
+                fowardB = 2'b10;    
             
             //MEM Hazard
             if ((MEM_WB_regWrite) && (MEM_WB_reg != 32'b0) && ( rs1 == MEM_WB_reg))
-                assign fowardA = 2'b01;
+                fowardA = 2'b01;
             if ((MEM_WB_regWrite) && (MEM_WB_reg != 32'b0) && ( rs2 == MEM_WB_reg)&& ( opcode_EXMEM != 7'b0010011))
-                assign fowardB = 2'b01;      
+                fowardB = 2'b01;      
                     
         end
     end

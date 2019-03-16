@@ -28,14 +28,14 @@ module mux3
      
      always_comb
      begin 
-     
+  
         case(s)
             2'b00:
-                assign y = d0;
+                y = d0;
             2'b01:
-                assign y = d1;
+                y = d1;
             2'b10: 
-                assign y = d2;
+                y = d2;
         
         endcase
      end   

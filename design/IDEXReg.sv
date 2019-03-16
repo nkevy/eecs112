@@ -64,7 +64,7 @@ module IDEXReg#(
     integer i;
     logic [R_NUM-1:0][DATA_W-1:0] mem;
     always @(negedge clk) begin
-        if (rst==1'b0 && Pause==1'b0)begin
+        if (rst==1'b0 && Pause==1'b0 && PCsel != 2'b01)begin
             mem[0] <= {31'b0,ALUsrc};
             mem[1] <= {31'b0,m2Reg};
             mem[2] <= {31'b0,rgWrite};
@@ -83,7 +83,7 @@ module IDEXReg#(
             mem[15] <=inst_in;
             mem[16] <=pc_reg;
         end
-        if ((rst==1'b1) || (Pause==1'b1)) begin
+        if ((rst==1'b1) || (Pause==1'b1) || (PCsel == 2'b01)) begin
         for(i=0;i<R_NUM;i++)
             mem[i]<=0;
         end

@@ -43,7 +43,7 @@ module Datapath #(
     output logic [DATA_W-1:0] WB_Data //ALU_Result
     );
 //feilds
-logic [PC_W-1:0] PC, PCPlus4, PCBranch, PCnext;
+logic [PC_W-1:0] PC, PCPlus4, PCBranch, PCnext, pc_r3;
 logic [INS_W-1:0] Instr;
 logic [DATA_W-1:0] Result;
 logic [DATA_W-1:0] PC_Reg;
@@ -53,28 +53,29 @@ logic [DATA_W-1:0] ReadData;
 logic [DATA_W-1:0] SrcA, SrcB, ALUResult;
 logic [DATA_W-1:0] ExtImm;
 logic [DATA_W-1:0] shift_left_ExtImm;
-logic ALUZero,Pause,Branch_r1;
+logic ALUZero,Pause,Branch_r1, Branch_r2;
 logic [1:0] PCsel;
+logic [PC_W-1:0] ifdPC;
 //hazard detect
 
 
-//PUT BRANCH BACK TO BRANCH R2 and CHANGE  PCR2 TO PCR1
+//PUT BRANCH BACK TO BRANCH R2 and CHANGE  PCR2 TO PCR3
 
 //Branch 
 assign shift_left_ExtImm = ExtImm << 1;
-assign PCsel = {Pause, (Branch_r1 && ALUZero)};
+assign PCsel = {Pause, (Branch_r2 && ALUZero)};
 
 
 // next PC
     logic [PC_W-1:0] pc_r2;
     adder #(9) pcadd (PC, 9'b100, PCPlus4);
     //was---------------- PC
-    adder #(9) pc_b_add (pc_r2, shift_left_ExtImm[9:1], PCBranch);
+    adder #(9) pc_b_add (pc_r3, shift_left_ExtImm[9:1], PCBranch);
     //mux2  #(9) mpc (PCPlus4, PCBranch, PCsel, PCnext);
     mux3  #(9) mpc (PCPlus4, PCBranch, PC, PCsel, PCnext);
     flopr #(9) pcreg(clk, reset, PCnext, PC);
     
-    assign PC_Reg = {23'b0,PCPlus4};
+    assign PC_Reg = {23'b0,PC};
     
 
  //Instruction memory
@@ -86,7 +87,6 @@ assign PCsel = {Pause, (Branch_r1 && ALUZero)};
     
 //pipline reg 1
     logic [DATA_W-1:0] ifdInst,pc_reg_r1;
-    logic [PC_W-1:0] ifdPC;
     logic [4:0] Operation_r1;
     logic pc2reg_r1,MemRead_r1,MemWrite_r1,ALUsrc_r1,m2Reg_r1,rgWrite_r1,AUIPC_r1;
     IFIDReg #(32,9)r0(clk,reset,Pause,PCsel,ALUsrc,MemtoReg,RegWrite,Branch,AUIPC,ALU_CC,PCtoReg,PC_Reg,Instr,PC,MemRead,MemWrite,
@@ -99,7 +99,7 @@ assign PCsel = {Pause, (Branch_r1 && ALUZero)};
             Result, Reg1, Reg2);
             
 //// pipeline reg 2
-    logic ALUsrc_r2,m2Reg_r2,RegWrite_r2,MemRead_r2,MemWrite_r2,pc2reg_r2,AUIPC_r2,Branch_r2;
+    logic ALUsrc_r2,m2Reg_r2,RegWrite_r2,MemRead_r2,MemWrite_r2,pc2reg_r2,AUIPC_r2;
     //was pc_r2
     logic [2:0]funct3_r2;
     logic [6:0]funct7_r2;
@@ -137,8 +137,8 @@ assign PCsel = {Pause, (Branch_r1 && ALUZero)};
     logic [4:0] rd_r3;
     logic [DATA_W-1:0] Inst_r3;
     logic [DATA_W-1:0] SrcB_r3, pc_reg_r3;
-    EXMEMReg #(32,12) r2(clk,reset,pc_reg_r2,pc2reg_r2,Inst_r2,m2Reg_r2,RegWrite_r2,MemRead_r2,MemWrite_r2,Branch_r2,AUIPC_r2,funct3_r2,SrcB_r2,ALUResult,
-    m2Reg_r3, rgWrite_r3, mRead_r3, mWrite_r3, Branch_r3, AUIPC_r3,funct3_r3,SrcB_r3,Result_r3,pc_reg_r3,pc2reg_r3,Inst_r3);
+    EXMEMReg #(32,12) r2(clk,reset,pc_reg_r2,pc2reg_r2,Inst_r2,m2Reg_r2,RegWrite_r2,MemRead_r2,MemWrite_r2,Branch_r2,AUIPC_r2,funct3_r2,SrcB_r2,ALUResult,pc_r2,
+    m2Reg_r3, rgWrite_r3, mRead_r3, mWrite_r3, Branch_r3, AUIPC_r3,funct3_r3,SrcB_r3,Result_r3,pc_reg_r3,pc2reg_r3,Inst_r3, pc_r3);
 //end reg3
    
     

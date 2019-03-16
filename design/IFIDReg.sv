@@ -55,7 +55,7 @@ module IFIDReg#(
     integer i;
     logic [11:0][DATA_W-1:0] mem ;
     always @(negedge clk) begin
-        if (rst==1'b0 && Pause==1'b0)begin
+        if (rst==1'b0 && Pause==1'b0 && PCsel != 2'b01)begin
             mem[0]<=inst_in;
             mem[1]<={23'b0,ipc};
             mem[2]<=PC_Reg;
@@ -69,7 +69,7 @@ module IFIDReg#(
             mem[10]<={31'b0,Branch};
             mem[11]<={31'b0,AUIPC_o};
         end
-        else if (rst==1'b1)
+        else if ((rst==1'b1) || (PCsel == 2'b01))
         for(i=0;i<SIZE;i++)
             mem[i]<=0;
     end
